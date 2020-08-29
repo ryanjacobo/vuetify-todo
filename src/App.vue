@@ -1,25 +1,24 @@
 <template>
-  <v-app class="grey lighten-4">
-   
-<Navbar/>
+  <v-app class="grey">
+    <Navbar />
+
     <v-content>
-     <router-view></router-view>
+      <router-view></router-view>
     </v-content>
+
   </v-app>
 </template>
 
 <script>
-import Navbar from '@/components/Navbar'
+import Navbar from "./components/Navbar";
 
 export default {
-  name: 'App',
-  data(){
-    return {
-
-    }
-  },
   components: {
-   Navbar
-  }
-}
+    Navbar
+  },
+  name: "App",
+  data() {
+    return {};
+  },
+};
 </script>
