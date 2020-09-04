@@ -59,7 +59,7 @@
 
       <v-tooltip top color="grey">
          <template  v-slot:activator="{ on, attrs }">
-        <v-btn small flat color="grey" @click="sortBy('title')"  
+        <v-btn small text color="grey" @click="sortBy('title')"  
           dark
           v-bind="attrs"
           v-on="on">
@@ -72,7 +72,7 @@
 
         <v-tooltip top color="grey">
          <template  v-slot:activator="{ on, attrs }">
-        <v-btn small flat color="grey"  @click="sortBy('person')"
+        <v-btn small text color="grey"  @click="sortBy('person')"
         dark
           v-bind="attrs"
           v-on="on">
@@ -85,7 +85,7 @@
        
       </v-layout>
 
-      <v-card flat v-for="project in projects" :key="project.title">
+      <v-card text v-for="project in projects" :key="project.title">
         <v-layout row wrap :class="`pa-3 project ${project.status}`">
           <v-flex xs12 md6>
             <div class="caption grey--text">Project Title</div>
@@ -99,14 +99,13 @@
 
           <v-flex xs6 sm4 md2>
             <div class="caption grey--text">Due by</div>
-            <div>{{ project.duedate }}</div>
+            <div>{{ project.due }}</div>
           </v-flex>
 
           <v-flex xs2 sm4 md2>
             <div class="right">
               <v-chip
                 small
-              
                 :class="`${project.status}`"
                 class="white--text my-2 caption"
               >{{ project.status }}</v-chip>
@@ -120,42 +119,12 @@
 </template>
 
 <script>
+import db from '@/firebase-config'
+
 export default {
   data() {
     return {
-      projects: [
-        {
-          title: "Design a new website",
-          person: "Ryan Jacobo",
-          duedate: "date",
-          status: "complete",
-          content:
-            "Mollit pariatur esse aliquip et incididunt aliqua Lorem labore qui fugiat deserunt eiusmod et et."
-        },
-        {
-          title: "Code up the homepage",
-          person: "Brad Pitt",
-          duedate: "date",
-          status: "complete",
-          content:
-            "Mollit sit mollit reprehenderit consectetur et ullamco consequat adipisicing."
-        },
-        {
-          title: "Design video thumbnail",
-          person: "Batman",
-          duedate: "date",
-          status: "overdue",
-          content: "Deserunt dolor duis in est ex et et ipsum anim in eiusmod."
-        },
-        {
-          title: "Create a community forum",
-          person: "Spider-man",
-          duedate: "date",
-          status: "ongoing",
-          content:
-            "Duis reprehenderit in excepteur mollit veniam cupidatat occaecat consectetur incididunt consequat dolore."
-        }
-      ]
+      projects: []
     };
   },
   methods: {
@@ -163,13 +132,29 @@ export default {
       this.projects.sort((a,b) => a[prop] < b[prop] ? -1 : 1) //a and b are a pair of consecutive items in the array. if a < b, return -1 (keep the order). otherwise, a > b, return 1 (change the order). performs this function on every consecutive pair of objects in the array until it's sorted correctly.
     }
   },
-  computed: {
-    projectStatus() {
-      if (this.project.status === "complete") return "green";
-      else if (this.project.status === "ongoing") return "orange";
-      return "tomato"
-    }
+  // Retrieves data from Firestore DB - Firestore Real-time Listeners. Using life-cycle hook.
+  created() {
+    db.collection('projects').onSnapshot(res => {
+      const changes = res.docChanges();
+
+      changes.forEach(change => {
+        if (change.type === 'added'){
+          this.projects.push({
+            ...change.doc.data(),
+            id: change.doc.id
+          })
+        }
+      })
+    })
   }
+  // Doesn't work
+  // computed: {
+  //   projectStatus() {
+  //     if (this.project.status === "complete") return "green";
+  //     else if (this.project.status === "ongoing") return "orange";
+  //     return "tomato"
+  //   }
+  // }
 };
 </script>
 

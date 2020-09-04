@@ -1,7 +1,7 @@
 <template>
   <v-dialog max-width="600px" v-model="dialog">
     <template v-slot:activator="{ on, attrs }">
-      <v-btn flat slot="activator" class="success" v-bind="attrs" v-on="on">Add New Project</v-btn>
+      <v-btn text slot="activator" class="success" v-bind="attrs" v-on="on">Add New Project</v-btn>
     </template>
     <v-card>
       <v-card-title>
@@ -46,7 +46,7 @@
 // import { format } from "date-fns"
 // date-fns doesn't work
 import moment from "moment";
-import db from "../firebase-config";
+import db from "@/firebase-config"; // @/ works the same as ../
 
 export default {
   data() {
@@ -69,7 +69,7 @@ export default {
           title: this.title,
           content: this.content,
           due: moment(this.due).format("dddd, MMMM Do YYYY"),
-          person: "Rob Zombie",
+          person: "Ryan Jacobo",
           status: "ongoing"
         };
 
@@ -78,7 +78,8 @@ export default {
           .then(() => {
             console.log("added to db");
             this.loadingWheel = false;
-            this.dialog = false
+            this.dialog = false;
+            this.$emit('projectAdded')
           });
       }
     }

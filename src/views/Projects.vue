@@ -9,7 +9,7 @@
           <v-expansion-panel-header>{{ project.title }}</v-expansion-panel-header>
           <v-expansion-panel-content class="grey--text">
            
-              <div class="font-weight-bold">due by {{ project.duedate }}</div>
+              <div class="font-weight-bold">due by {{ project.due }}</div>
               <div>{{ project.content }}</div>
           
           </v-expansion-panel-content>
@@ -21,42 +21,12 @@
 </template>
 
 <script>
+import db from '@/firebase-config'
+
 export default {
   data () {
     return {
-      projects: [
-        {
-          title: "Design a new website",
-          person: "Ryan Jacobo",
-          duedate: "date",
-          status: "ongoing",
-          content:
-            "Mollit pariatur esse aliquip et incididunt aliqua Lorem labore qui fugiat deserunt eiusmod et et."
-        },
-        {
-          title: "Code up the homepage",
-          person: "Brad Pitt",
-          duedate: "date",
-          status: "complete",
-          content:
-            "Mollit sit mollit reprehenderit consectetur et ullamco consequat adipisicing."
-        },
-        {
-          title: "Design video thumbnail",
-          person: "Batman",
-          duedate: "date",
-          status: "overdue",
-          content: "Deserunt dolor duis in est ex et et ipsum anim in eiusmod."
-        },
-        {
-          title: "Create a community forum",
-          person: "Spider-man",
-          duedate: "date",
-          status: "ongoing",
-          content:
-            "Duis reprehenderit in excepteur mollit veniam cupidatat occaecat consectetur incididunt consequat dolore."
-        }
-      ]
+      projects: []
     }
   },
   computed: {
@@ -65,6 +35,20 @@ export default {
         return project.person === 'Ryan Jacobo'
       })
     }
+  },
+  created() {
+    db.collection('projects').onSnapshot(res => {
+      const changes = res.docChanges();
+
+      changes.forEach(change => {
+        if (change.type === 'added'){
+          this.projects.push({
+            ...change.doc.data(),
+            id: change.doc.id
+          })
+        }
+      })
+    })
   }
 };
 </script>
