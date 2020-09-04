@@ -1,12 +1,15 @@
 <template>
-  <v-app class="grey">
+
+  <v-app class="grey"> <!--v-app class="grey lighten-4" not working-->
+
     <Navbar />
 
-    <v-content>
+    <v-content class="mx-4 mb-4">
       <router-view></router-view>
     </v-content>
 
   </v-app>
+ 
 </template>
 
 <script>
@@ -19,6 +22,7 @@ export default {
   name: "App",
   data() {
     return {};
-  },
+  }
 };
 </script>
+

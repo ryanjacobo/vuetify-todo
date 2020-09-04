@@ -1,40 +1,70 @@
 <template>
-  <nav>
-    <v-toolbar flat app>
-      <!--v-toolbar-side-icon doesn't render. solution: wrap v-toolbar-side-icon in a <span>-->
-      <!--<span><v-toolbar-side-icon @click="drawer = !drawer" class="grey--text"></v-toolbar-side-icon></span>-->
-      <v-app-bar-nav-icon @click="drawer = !drawer" class="grey--text" ></v-app-bar-nav-icon>
+  <div>
+    <v-app-bar flat app>
+      <!--v-app-bar-nav-icon has replaced v-toolbar-side-icon-->
+      <v-app-bar-nav-icon @click="drawer = !drawer" class="grey--text"></v-app-bar-nav-icon>
       <v-toolbar-title class="text-uppercase grey--text">
         <span class="font-weight-light">Todo</span>
         <span>Ninja</span>
       </v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-btn flat color="grey">
+
+      <!--dropdown menu-->
+      <v-menu offset-y>
+        <!--offsets in the y direction - shows the menu button when dropdown is open-->
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn flat color="grey lighten-2" v-bind="attrs" v-on="on">
+            <v-icon left>expand_more</v-icon>menu
+          </v-btn>
+        </template>
+
+        <v-list>
+          <v-list-item v-for="(link, text) in links" :key="text" router :to="link.route">
+            <v-list-tile-title>{{ link.text }}</v-list-tile-title>
+          </v-list-item>
+        </v-list>
+      </v-menu>
+
+      <v-btn flat color="grey lighten-2">
         <span>Sign Out</span>
         <v-icon right>exit_to_app</v-icon>
       </v-btn>
-    </v-toolbar>
+    </v-app-bar>
 
     <v-navigation-drawer app v-model="drawer" class="primary">
-      <p class="success">test</p>
+      <v-layout column align-center>
+        <!--align = vertical(column). justify = horizontal(row)-->
+        <v-flex class="mt-5">
+          <v-avatar size="100">
+            <img src="/avatar-1.jpg" alt />
+          </v-avatar>
+          <p class="white--text subheading mt-1">Ryan Jacobo</p>
+        </v-flex>
+        <v-flex class="ma-5">
+          <Popup />
+        </v-flex>
+      </v-layout>
 
-      <v-list v-for="link in links" :key="link.text" router :to="link.route">
-        <v-list-tile >
-          <v-list-tile-action>
-            <v-icon class="white--text">{{link.icon}}</v-icon>
-          </v-list-tile-action>
-          <v-list-tile-content>
-            <v-list-tile-title class="white--text">{{link.text}}</v-list-tile-title>
-          </v-list-tile-content>
-        </v-list-tile>
+      <v-list>
+        <!-- <v-list-tile> has been replaced <v-list-item> -->
+        <v-list-item v-for="link in links" :key="link.text" router :to="link.route">
+          <!-- <v-list-tile-action > -->
+          <v-icon class="white--text">{{link.icon}}</v-icon>
+          <!-- </v-list-tile-action> -->
+          <!-- <v-list-tile-content> -->
+          <v-list-tile-title class="white--text">{{link.text}}</v-list-tile-title>
+          <!-- </v-list-tile-content> -->
+        </v-list-item>
       </v-list>
-
     </v-navigation-drawer>
-  </nav>
+  </div>
 </template>
 
 <script>
+import Popup from "./Popup";
+
 export default {
+  components: { Popup },
   data() {
     return {
       drawer: false,
